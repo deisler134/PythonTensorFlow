@@ -1,0 +1,22 @@
+mpirun -np 2 \
+    -H localhost:2 \
+    -bind-to none -map-by slot \
+    -x NCCL_DEBUG=INFO -x LD_LIBRARY_PATH -x PATH \
+    -mca pml ob1 -mca btl ^openib \
+    python3 imagenet_distributed_train_monitored_horovod_new.py --train_dir=/media/learningai/7C22214D22210E28/kaggleData/ImageNet/inception/data/ILSVRC2013/raw-data/imagenet/save/ --batch_size=64 --data_dir=/media/learningai/7C22214D22210E28/kaggleData/ImageNet/inception/data/ILSVRC2013/raw-data/imagenet-data/tfdata/
+
+
+
+mpirun -np 4 \
+    -H 192.168.88.46:2, 192.168.88.158:2 \
+    -bind-to none -map-by slot \
+    -x NCCL_DEBUG=INFO -x LD_LIBRARY_PATH -x PATH \
+    -mca pml ob1 -mca btl ^openib \
+    python3 tensorflow_horovod_mnist.py
+
+mpirun -np 4 \
+    -H 192.168.88.46:2, 192.168.88.158:2 \
+    -bind-to none -map-by socket:OVERSUBSCRIBE \
+    -x NCCL_DEBUG=INFO -x LD_LIBRARY_PATH -x PATH \
+    -mca pml ob1 -mca btl ^openib \
+    python3 tensorflow_horovod_mnist.py
